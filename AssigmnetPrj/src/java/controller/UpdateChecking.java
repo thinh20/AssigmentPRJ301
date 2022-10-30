@@ -22,7 +22,7 @@ import model.Student;
  *
  * @author Admin
  */
-public class UpdateCheckattend extends HttpServlet {
+public class UpdateChecking extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
