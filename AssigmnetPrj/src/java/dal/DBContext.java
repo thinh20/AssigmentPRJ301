@@ -29,7 +29,5 @@ public class DBContext {
             Logger.getLogger(DBContext.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    public static void main(String[] args) {
-        DBContext bContext = new DBContext();
-    }
+
 }
