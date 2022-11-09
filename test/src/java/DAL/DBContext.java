@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package dal;
+package DAL;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -20,8 +20,8 @@ public class DBContext {
     public DBContext() {
         try {
             String user = "sa";
-            String pass = "123456";
-            String url = "jdbc:sqlserver://localhost:1433;databaseName=PrjChecking1";
+            String pass = "12345";
+            String url = "jdbc:sqlserver://localhost:1433;databaseName=projectCheckAttend";
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
             connection = DriverManager.getConnection(url, user, pass);
             System.out.println("ok");

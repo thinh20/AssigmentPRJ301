@@ -1,19 +1,28 @@
 /*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
  */
 package controller;
 
+import dal.CheckAttendDAO;
+import dal.GroupDAO;
+import dal.SlotDAO;
+import dal.StudentDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import model.Check;
+import model.Slot;
+import model.Student;
 
 /**
  *
- * @author acer
+ * @author Admin
  */
 public class CheckAttend extends HttpServlet {
 
@@ -29,18 +38,41 @@ public class CheckAttend extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        try ( PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet CheckAttend</title>");            
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet CheckAttend at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
+        try {
+            String status = request.getParameter("status");
+            if ("false".equals(status)) {
+                CheckAttendDAO cadao = new CheckAttendDAO();
+                StudentDAO studao = new StudentDAO();
+                String sid = request.getParameter("sid");
+
+                SlotDAO sdao = new SlotDAO();
+                ArrayList<Check> cklist = cadao.getAllStudent(Integer.valueOf(sid));
+                Slot s = sdao.getSlotById(Integer.valueOf(sid));
+                ArrayList<Student> stulist = studao.getAllStudent(s.getGroup().getCode());
+                request.setAttribute("cklist", cklist);
+                request.setAttribute("stulist", stulist);
+                request.setAttribute("s", s);
+                request.getRequestDispatcher("Checkattendence.jsp").forward(request, response);
+            }
+            if ("true".equals(status)) {
+                GroupDAO gdao = new GroupDAO();
+                CheckAttendDAO cadao = new CheckAttendDAO();
+                StudentDAO studao = new StudentDAO();
+                String sid = request.getParameter("sid");
+                SlotDAO sdao = new SlotDAO();
+                ArrayList<Check> cklist = cadao.getAllStudent(Integer.valueOf(sid));
+                Slot s = sdao.getSlotById(Integer.valueOf(sid));
+                ArrayList<Student> stulist = studao.getAllStudent(s.getGroup().getCode());
+                request.setAttribute("cklist", cklist);
+                request.setAttribute("stulist", stulist);
+                request.setAttribute("s", s);
+                request.getRequestDispatcher("Checked.jsp").forward(request, response);
+            }
+
+        } catch (Exception e) {
+            response.getWriter().print("Lack parameter try again!");
         }
+
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -69,7 +101,28 @@ public class CheckAttend extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        SlotDAO sdao = new SlotDAO();
+        CheckAttendDAO cadao = new CheckAttendDAO();
+        StudentDAO studao = new StudentDAO();
+        String slotid = request.getParameter("sid");
+        String instructorid = request.getParameter("instructorid");
+        Slot s = sdao.getSlotById(Integer.valueOf(slotid));
+        ArrayList<Student> stulist = studao.getAllStudent(s.getGroup().getCode());
+
+        for (Student student : stulist) {
+            String checkbox = request.getParameter(String.valueOf(student.getCode()));
+            int checkstatus = 0;
+            if (checkbox == null) {
+                checkstatus = 0;
+            } else {
+                checkstatus = 1;
+            }
+            response.getWriter().println(student.getCode() + "-" + checkbox);
+            cadao.insertAttendance(Integer.valueOf(slotid), student.getId(), checkstatus, "", instructorid);
+        }
+        sdao.updateStatus(Integer.valueOf(slotid));
+        response.sendRedirect("WeeklyTimeTable");
+
     }
 
     /**

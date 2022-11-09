@@ -27,7 +27,6 @@ public class GroupDAO extends DBContext {
         } catch (Exception e) {
         }
         return camp;
-
     }
 
     public ArrayList getAllTerm(String campus) {
@@ -117,5 +116,4 @@ public class GroupDAO extends DBContext {
         }
         return group;
     }
-
 }

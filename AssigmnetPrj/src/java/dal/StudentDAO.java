@@ -33,5 +33,8 @@ public class StudentDAO extends DBContext {
         }
         return alist;
     }
-
+    public static void main(String[] args) {
+        StudentDAO StudentDAO = new StudentDAO();
+        System.out.println(StudentDAO.getAllStudent("SE1647"));
+    }
 }
